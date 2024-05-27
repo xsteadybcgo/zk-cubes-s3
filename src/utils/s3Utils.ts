@@ -15,7 +15,7 @@ async function uploadToS3WithRetry(filePath: string, s3Key: string, isJson = fal
     contentType = 'application/json';
   } else {
     body = await fs.readFile(filePath);
-    contentType = 'application/octet-stream';
+    contentType = 'image/png';
   }
 
   const uploadParams = {
