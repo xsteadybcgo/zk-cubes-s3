@@ -1,6 +1,8 @@
+import path from 'path';
 import sharp from 'sharp';
+import fs from 'fs/promises';
 
-export async function combineImages(layers: string[], outputFile: string): Promise<void> {
+export async function generateImage(layers: string[], outputFile: string): Promise<void> {
   try {
     const images = await Promise.all(layers.map(layer => sharp(layer).resize(1024, 1024).toBuffer()));
     let compositeImage = sharp(images[0]).resize(1024, 1024);
@@ -16,4 +18,28 @@ export async function combineImages(layers: string[], outputFile: string): Promi
   } catch (error) {
     console.error('Error combining images:', error);
   }
+}
+
+export async function generateMetadata(outputFolder: string, index: number): Promise<string> {
+  const jsonData = {
+    description: `In a distant blockchain realm, countless strings and blocks interweave, creating a vast, intricate yet monotonous network. Day in and day out, the same predictable processes played out, leaving the digital landscape uninspired and static.. One day, amidst the fragmented liquidity of this digital universe, a new chain emerged—Nova.
+
+Nova breathed new life into the blockchain, shattering the monotony and granting blocks and strings a fresh identity and greater customizationn. From this innovation, the Cubo was born. Cubo, meaning "cube" or "bloc" in Latin and Italian, is a transparent cube that embodies everything within the zk.Link ecosystem.
+
+Cubo acts as a cryo chamber, preserving the digital essence of its hosts while maintaining their original traits. It has the unique ability to house a variety of digital personas, from abstract series to the familiar PFP characters. With upcoming NFT partnerships and new ecosystem members, projects can seamlessly integrate their existing NFTs within Cubo, ensuring their preservation and continued evolution.`,
+    image: `https://zklink-nova-nft.s3.ap-northeast-1.amazonaws.com/cuboimage/${index}.png`,
+    name: "Cubo the Block",
+    attributes: [
+      { trait_type: "Background", value: `${index}` },
+      { trait_type: "Clothes", value: `${index}` },
+      { trait_type: "Crown", value: `${index}` },
+      { trait_type: "Face", value: `${index}` },
+      { trait_type: "Hand", value: `${index}` },
+      { trait_type: "Head", value: `${index}` },
+    ],
+  };
+
+  const metadataFilePath = path.join(outputFolder, `${index}.json`);
+  await fs.writeFile(metadataFilePath, JSON.stringify(jsonData));
+  return metadataFilePath;
 }
