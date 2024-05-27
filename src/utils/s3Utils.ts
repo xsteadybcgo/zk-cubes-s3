@@ -11,10 +11,11 @@ async function uploadToS3WithRetry(filePath: string, s3Key: string, isJson = fal
   let contentType;
 
   if (isJson) {
-    body = JSON.stringify(filePath);
+    body = await fs.readFile(filePath, 'utf8'); 
     contentType = 'application/json';
   } else {
     body = await fs.readFile(filePath);
+    contentType = 'application/octet-stream';
   }
 
   const uploadParams = {

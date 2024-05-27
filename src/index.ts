@@ -6,6 +6,7 @@ import { generateNFTData, uploadGeneratedNFTData } from './generateNFT';
 import { NFTLayers } from './types';
 import fs from 'fs/promises';
 import { NFT_START_ID } from './constant';
+import path from 'path';
 
 
 async function main(): Promise<void> {
@@ -23,7 +24,7 @@ async function main(): Promise<void> {
   await fs.mkdir('output', { recursive: true });
 
   const count = await generateNFTData(layers, 'output');
-  await uploadGeneratedNFTData('output', NFT_START_ID, count);
+  await uploadGeneratedNFTData(path.resolve('output'), NFT_START_ID, count);
 }
 
 main().catch(console.error);
