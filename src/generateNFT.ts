@@ -76,8 +76,8 @@ export async function uploadGeneratedNFTData(outputFolder: string, startIndex: n
 
   for (let i = startIndex; i < endIndex; i++) {
     const outputFile = path.join(outputFolder, `${i}.png`);
-    const s3ImageKey = `cuboimage/${i}.png`;
-    const s3MetadataKey = `cubonft/${i}`;
+    const s3ImageKey = `cuboimage-test/${i}.png`;
+    const s3MetadataKey = `cubonft-test/${i}`;
 
     if (!uploadedFiles.has(s3ImageKey)) {
       filesToUpload.push({ filePath: outputFile, s3Key: s3ImageKey });
