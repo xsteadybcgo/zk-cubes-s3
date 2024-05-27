@@ -2,7 +2,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import fs from 'fs/promises';
 import { saveUploadedFiles } from './fileUtils';
 
-const s3Client = new S3Client(); 
+const s3Client = new S3Client({ region: 'ap-northeast-1'}); 
 const bucketName = 'zklink-nova-nft'; 
 
 async function uploadToS3WithRetry(filePath: string, s3Key: string, isJson = false, retryCount = 3): Promise<void> {
