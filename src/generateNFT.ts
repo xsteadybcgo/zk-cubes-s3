@@ -5,9 +5,9 @@ import { NFTLayers } from './types';
 import path from 'path';
 import { NFT_START_ID, TOTAL_NFT_NUM, S3_IMAGE_KEY_PREFIX, S3_META_KEY_PREFIX } from './constant';
 
-function getRandomElement<T>(array: T[]): T {
+function getRandomElement<T>(array: T[]): [number, T] {
   const index = Math.floor(Math.random() * array.length);
-  return array[index];
+  return [index, array[index]];
 }
 
 export async function generateNFTData(layers: NFTLayers, outputFolder: string): Promise<number> {
@@ -18,12 +18,20 @@ export async function generateNFTData(layers: NFTLayers, outputFolder: string): 
 
   while (uniqueCombinations.size < totalNFTs) {
     const nftId = count + NFT_START_ID;
-    const background = getRandomElement(backgrounds);
-    const cloth = getRandomElement(clothes);
-    const crown = getRandomElement(crowns);
-    const face = getRandomElement(faces);
-    const hand = getRandomElement(hands);
-    const head = getRandomElement(heads);
+    const [backgroundIndex, background] = getRandomElement(backgrounds);
+    const [clothesIndex, cloth] = getRandomElement(clothes);
+    const [crownIndex, crown] = getRandomElement(crowns);
+    const [faceIndex, face] = getRandomElement(faces);
+    const [handIndex, hand] = getRandomElement(hands);
+    const [headIndex, head] = getRandomElement(heads);
+    const traitMap = {
+      background: backgroundIndex,
+      clothes: clothesIndex,
+      crown: crownIndex, 
+      face: faceIndex, 
+      hand: handIndex,
+      head: headIndex
+    }
 
     const combinationKey = `${background}-${cloth}-${crown}-${face}-${hand}-${head}`;
     
@@ -35,7 +43,7 @@ export async function generateNFTData(layers: NFTLayers, outputFolder: string): 
 
       await generateImage(layers, outputFile);
 
-      await generateMetadata(outputFolder, nftId);
+      await generateMetadata(outputFolder, nftId, traitMap);
 
       count++;
       await saveGeneratedCombinations(uniqueCombinations); 

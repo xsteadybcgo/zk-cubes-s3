@@ -20,7 +20,8 @@ export async function generateImage(layers: string[], outputFile: string): Promi
   }
 }
 
-export async function generateMetadata(outputFolder: string, index: number): Promise<string> {
+export async function generateMetadata(outputFolder: string, index: number, traitMap: {[key:string]: number}): Promise<string> {
+  const { background, clothes, crown, face, hand, head } = traitMap
   const jsonData = {
     description: `In a distant blockchain realm, countless strings and blocks interweave, creating a vast, intricate yet monotonous network. Day in and day out, the same predictable processes played out, leaving the digital landscape uninspired and static.. One day, amidst the fragmented liquidity of this digital universe, a new chain emerged—Nova.
 
@@ -30,12 +31,12 @@ Cubo acts as a cryo chamber, preserving the digital essence of its hosts while m
     image: `https://zklink-nova-nft.s3.ap-northeast-1.amazonaws.com/cuboimage/${index}.png`,
     name: "Cubo the Block",
     attributes: [
-      { trait_type: "Background", value: `${index}` },
-      { trait_type: "Clothes", value: `${index}` },
-      { trait_type: "Crown", value: `${index}` },
-      { trait_type: "Face", value: `${index}` },
-      { trait_type: "Hand", value: `${index}` },
-      { trait_type: "Head", value: `${index}` },
+      { trait_type: "Background", value: `${background}` },
+      { trait_type: "Clothes", value: `${clothes}` },
+      { trait_type: "Crown", value: `${crown}` },
+      { trait_type: "Face", value: `${face}` },
+      { trait_type: "Hand", value: `${hand}` },
+      { trait_type: "Head", value: `${head}` },
     ],
   };
 
