@@ -1,7 +1,12 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { ensureCacheDir, getFiles } from './utils/fileUtils';
 import { generateNFTData, uploadGeneratedNFTData } from './generateNFT';
 import { NFTLayers } from './types';
 import fs from 'fs/promises';
+import { NFT_START_ID } from './constant';
+
 
 async function main(): Promise<void> {
   await ensureCacheDir();
@@ -18,7 +23,7 @@ async function main(): Promise<void> {
   await fs.mkdir('output', { recursive: true });
 
   const count = await generateNFTData(layers, 'output');
-  await uploadGeneratedNFTData('output', 0, count);
+  await uploadGeneratedNFTData('output', NFT_START_ID, count);
 }
 
 main().catch(console.error);

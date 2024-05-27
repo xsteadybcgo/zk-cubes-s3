@@ -4,6 +4,7 @@ import { combineImages } from './utils/imageUtils';
 import { NFTLayers } from './types';
 import path from 'path';
 import fs from 'fs/promises';
+import { NFT_START_ID, TOTAL_NFT_NUM, S3_IMAGE_KEY_PREFIX, S3_META_KEY_PREFIX } from './constant';
 
 function getRandomElement<T>(array: T[]): T {
   const index = Math.floor(Math.random() * array.length);
@@ -13,10 +14,11 @@ function getRandomElement<T>(array: T[]): T {
 export async function generateNFTData(layers: NFTLayers, outputFolder: string): Promise<number> {
   const { backgrounds, clothes, crowns, faces, hands, heads } = layers;
   const uniqueCombinations = await loadGeneratedCombinations();
-  const totalNFTs = 300;
+  const totalNFTs = TOTAL_NFT_NUM - NFT_START_ID;
   let count = await loadCount();
 
   while (uniqueCombinations.size < totalNFTs) {
+    const nftId = count + NFT_START_ID;
     const background = getRandomElement(backgrounds);
     const cloth = getRandomElement(clothes);
     const crown = getRandomElement(crowns);
@@ -30,11 +32,11 @@ export async function generateNFTData(layers: NFTLayers, outputFolder: string): 
       uniqueCombinations.add(combinationKey);
 
       const layers = [background, crown, head, face, cloth, hand];
-      const outputFile = path.join(outputFolder, `${count}.png`);
+      const outputFile = path.join(outputFolder, `${nftId}.png`);
 
       await combineImages(layers, outputFile);
 
-      await generateMetadata(outputFolder, count);
+      await generateMetadata(outputFolder, nftId);
 
       count++;
       await saveGeneratedCombinations(uniqueCombinations); 
@@ -70,14 +72,14 @@ Cubo acts as a cryo chamber, preserving the digital essence of its hosts while m
   return metadataFilePath;
 }
 
-export async function uploadGeneratedNFTData(outputFolder: string, startIndex: number, endIndex: number): Promise<void> {
+export async function uploadGeneratedNFTData(outputFolder: string, startIndex: number, count: number): Promise<void> {
   const filesToUpload: Array<{ filePath: string, s3Key: string, isJson?: boolean }> = [];
   const uploadedFiles = await loadUploadedFiles();
 
-  for (let i = startIndex; i < endIndex; i++) {
+  for (let i = startIndex; i < count + startIndex; i++) {
     const outputFile = path.join(outputFolder, `${i}.png`);
-    const s3ImageKey = `cuboimage-test/${i}.png`;
-    const s3MetadataKey = `cubonft-test/${i}`;
+    const s3ImageKey = `${S3_IMAGE_KEY_PREFIX}/${i}.png`;
+    const s3MetadataKey = `${S3_META_KEY_PREFIX}/${i}`;
 
     if (!uploadedFiles.has(s3ImageKey)) {
       filesToUpload.push({ filePath: outputFile, s3Key: s3ImageKey });
